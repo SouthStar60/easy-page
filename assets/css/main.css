@@ -378,3 +378,26 @@ body {
         font-size: 0.85rem;
     }
 }
+
+.drawer-nav .volume > ul.children > .article > a {
+    padding-left: 0.65rem; 
+}
+
+/* 面包屑样式 */
+.breadcrumb {
+    margin-left: 1rem;
+    font-size: 0.9rem;
+    color: #8a8a8a;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 400px;
+}
+@media (max-width: 640px) {
+    .breadcrumb {
+        max-width: 120px;
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
+    }
+}

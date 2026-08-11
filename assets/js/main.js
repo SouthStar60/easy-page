@@ -291,6 +291,8 @@
     function loadArticle(filePath, openMode = 'embed') {
         if (openMode === 'blank') {
             window.open(filePath, '_blank');
+            // 更新面包屑
+            updateBreadcrumb(filePath);
             return;
         }
 
@@ -300,6 +302,8 @@
                         style="width:100%; height:100%; border:none; background:#fff; min-height: 80vh;">
                 </iframe>
             `;
+            // 更新面包屑
+            updateBreadcrumb(filePath);
             return;
         }
 
@@ -316,9 +320,13 @@
                 if (typeof window.initArticle === 'function') {
                     window.initArticle();
                 }
+                // 更新面包屑
+                updateBreadcrumb(filePath);
             })
             .catch(err => {
                 contentArea.innerHTML = `<div class="article-page"><p style="color:#ff6b6b;">加载失败: ${err.message}</p></div>`;
+                // 更新面包屑
+                updateBreadcrumb(filePath);
             });
     }
 
@@ -380,15 +388,14 @@
     // 搜索功能
     function filterArticles(query) {
         const articles = drawerNav.querySelectorAll('.article');
+        // 先隐藏所有分卷
+        const allVolumes = drawerNav.querySelectorAll('.volume, .subvolume');
+        allVolumes.forEach(v => v.style.display = 'none');
+
         if (!query) {
-            articles.forEach(art => {
-                art.style.display = '';
-                let parent = art.closest('li.volume, li.subvolume');
-                while (parent) {
-                    parent.style.display = '';
-                    parent = parent.parentElement?.closest('li.volume, li.subvolume');
-                }
-            });
+            // 无搜索词，恢复所有显示
+            allVolumes.forEach(v => v.style.display = '');
+            articles.forEach(art => art.style.display = '');
             return;
         }
         const lowerQuery = query.toLowerCase();
@@ -439,6 +446,76 @@
                 this.blur();
             }
         });
+    }
+
+    // 获取文章路径
+    function getArticlePath(groupKey, filePath) {
+        const group = DOC_DATA[groupKey];
+        if (!group) return null;
+        for (let vol of group.volumes) {
+            // 先检查直接文章
+            if (vol.articles) {
+                for (let art of vol.articles) {
+                    if (art.file === filePath) {
+                        return { volume: vol.name, subvolume: null, title: art.title };
+                    }
+                }
+            }
+            // 检查子分卷
+            if (vol.subvolumes) {
+                for (let sub of vol.subvolumes) {
+                    if (sub.articles) {
+                        for (let art of sub.articles) {
+                            if (art.file === filePath) {
+                                return { volume: vol.name, subvolume: sub.name, title: art.title };
+                            }
+                        }
+                    }
+                    if (sub.children) {
+                        for (let child of sub.children) {
+                            if (child.type === 'article' && child.file === filePath) {
+                                return { volume: vol.name, subvolume: sub.name, title: child.title };
+                            }
+                        }
+                    }
+                }
+            }
+            // 检查 children
+            if (vol.children) {
+                for (let child of vol.children) {
+                    if (child.type === 'article' && child.file === filePath) {
+                        return { volume: vol.name, subvolume: null, title: child.title };
+                    }
+                    if (child.type === 'subvolume') {
+                        if (child.children) {
+                            for (let subChild of child.children) {
+                                if (subChild.type === 'article' && subChild.file === filePath) {
+                                    return { volume: vol.name, subvolume: child.name, title: subChild.title };
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    function updateBreadcrumb(filePath) {
+        const breadcrumb = document.getElementById('breadcrumb');
+        if (!breadcrumb) return;
+        const path = getArticlePath(currentGroup, filePath);
+        if (path) {
+            let text = '';
+            if (path.subvolume) {
+                text = `${path.volume} / ${path.subvolume} / ${path.title}`;
+            } else {
+                text = `${path.volume} / ${path.title}`;
+            }
+            breadcrumb.textContent = text;
+        } else {
+            breadcrumb.textContent = '';
+        }
     }
 
     // 初始化
