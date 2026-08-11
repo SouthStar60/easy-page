@@ -1,0 +1,114 @@
+/* 文章页独立样式.*/
+.article-page {
+    max-width: 860px;
+    margin: 0 auto;
+    background: #1e1e1e;
+    color: #e8e8e8;
+    line-height: 1.7;
+}
+
+.article-page h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #f0f0f0;
+    border-bottom: 1px solid #3a3a3a;
+    padding-bottom: 0.5rem;
+}
+.article-page h2 {
+    font-size: 1.6rem;
+    margin: 1.5rem 0 0.8rem 0;
+    color: #e0e0e0;
+}
+.article-page h3 {
+    font-size: 1.3rem;
+    margin: 1.2rem 0 0.6rem 0;
+    color: #d0d0d0;
+}
+.article-page p {
+    margin: 0.8rem 0;
+    color: #d0d0d0;
+}
+.article-page a {
+    color: #5b9aff;
+    text-decoration: none;
+}
+.article-page a:hover {
+    text-decoration: underline;
+}
+.article-page ul, .article-page ol {
+    margin: 0.8rem 0 0.8rem 1.8rem;
+    color: #d0d0d0;
+}
+.article-page li {
+    margin: 0.3rem 0;
+}
+.article-page blockquote {
+    border-left: 4px solid #5b9aff;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: #b0b0b0;
+    background: #2a2a2a;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+}
+.article-page code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    background: #2d2d2d;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #e0b0ff;
+}
+.article-page pre {
+    background: #282c34;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.2rem 0;
+}
+.article-page pre code {
+    background: transparent;
+    padding: 0;
+    font-size: 0.9rem;
+    color: #abb2bf;
+}
+.article-page img {
+    max-width: 100%;
+    border-radius: 6px;
+    margin: 1rem 0;
+}
+.article-page hr {
+    border: none;
+    border-top: 1px solid #3a3a3a;
+    margin: 2rem 0;
+}
+/* 代码高亮样式 */
+.hljs-keyword {
+    color: #c678dd;
+    font-weight: bold;
+}
+.hljs-builtin {
+    color: #e5c07b;
+}
+.hljs-literal {
+    color: #d19a66;
+}
+.hljs-string {
+    color: #98c379;
+}
+.hljs-number {
+    color: #d19a66;
+}
+.hljs-comment {
+    color: #5c6370;
+    font-style: italic;
+}
+.hljs-tag {
+    color: #e06c75;
+}
+.hljs-attr {
+    color: #d19a66;
+}
+.hljs-property {
+    color: #e06c75;
+}

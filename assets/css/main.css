@@ -1,0 +1,339 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #1e1e1e;
+    color: #e8e8e8;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* 顶栏 */
+.topbar {
+    background: #2a2a2a;
+    padding: 0 1.5rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #3a3a3a;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.hamburger {
+    background: none;
+    border: none;
+    color: #b0b0b0;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+.hamburger:hover {
+    background: #3a3a3a;
+}
+.hamburger svg {
+    display: block;
+}
+
+.topbar-brand {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #e0e0e0;
+    letter-spacing: 0.3px;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.group-switcher {
+    background: none;
+    border: none;
+    color: #b0b0b0;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.15s;
+    font-weight: 600;
+}
+.group-switcher:hover {
+    background: #3a3a3a;
+}
+.group-label {
+    display: inline-block;
+}
+
+/* 左侧悬浮面板 */
+.drawer {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 300px;
+    height: 100vh;
+    background: #252525;
+    border-right: 1px solid #3a3a3a;
+    transition: left 0.25s ease;
+    z-index: 200;
+    overflow-y: auto;
+    padding: 1rem 0.5rem;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.5);
+}
+.drawer.open {
+    left: 0;
+}
+
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.5rem 1rem 0.5rem;
+    border-bottom: 1px solid #3a3a3a;
+}
+.drawer-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #d0d0d0;
+}
+.drawer-close {
+    background: none;
+    border: none;
+    color: #b0b0b0;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    display: flex;
+}
+.drawer-close:hover {
+    background: #3a3a3a;
+}
+
+.drawer-nav {
+    padding-top: 0.75rem;
+}
+.drawer-nav ul {
+    list-style: none;
+    padding-left: 0;
+}
+.drawer-nav li {
+    margin-bottom: 2px;
+}
+.drawer-nav .folder-icon,
+.drawer-nav .file-icon {
+    margin-right: 6px;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+.drawer-nav .folder-icon svg,
+.drawer-nav .file-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.drawer-nav ul.children {
+    padding-left: 1.2rem;
+}
+
+/* 母分卷 */
+.drawer-nav .volume > a {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;          /* 统一内边距 */
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #f0f0f0;
+    text-decoration: none;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background 0.1s, border-color 0.1s;
+}
+.drawer-nav .volume > a:hover {
+    background: #3a3a3a;
+    border-left-color: #5b9aff;
+}
+
+/* 子分卷 */
+.drawer-nav .subvolume > a {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: #c0c0c0;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.drawer-nav .subvolume > a:hover {
+    background: #333;
+}
+
+/* 文章 */
+.drawer-nav .article > a {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: #a8a8a8;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+.drawer-nav .article > a:hover {
+    background: #2a2a2a;
+}
+.drawer-nav .article.active > a {
+    color: #5b9aff;
+    background: #2a3a5a;
+}
+
+/* 折叠控制 */
+.drawer-nav ul.children {
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+    max-height: 2000px;
+}
+.drawer-nav ul.children.collapsed {
+    max-height: 0;
+    display: none;
+}
+.drawer-nav ul.children:not(.collapsed) {
+    display: block;
+}
+.drawer-nav .toggle {
+    cursor: pointer;
+}
+
+/* 组切换菜单 */
+.group-menu {
+    position: fixed;
+    top: 56px;
+    right: 1rem;
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    min-width: 140px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    display: none;
+    z-index: 150;
+}
+.group-menu.open {
+    display: block;
+}
+.group-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.group-menu li {
+    padding: 6px 20px;
+    cursor: pointer;
+    color: #c8c8c8;
+    transition: background 0.1s;
+    font-size: 0.95rem;
+}
+.group-menu li:hover {
+    background: #3a3a3a;
+    color: #fff;
+}
+.group-menu li.active-group {
+    color: #5b9aff;
+    font-weight: 500;
+}
+
+/* 内容区 */
+.content {
+    flex: 1;
+    padding: 2rem;
+    background: #1e1e1e;
+    overflow-y: auto;
+}
+.content-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #6a6a6a;
+    font-size: 1.1rem;
+}
+
+/* 遮罩层 */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 150;
+    display: none;
+}
+.overlay.active {
+    display: block;
+}
+
+/* 移动端适配 */
+@media (max-width: 640px) {
+    .topbar {
+        padding: 0 0.8rem;
+        height: 48px;
+    }
+    .topbar-brand {
+        font-size: 1rem;
+    }
+    .drawer {
+        width: 260px;
+        left: -280px;
+    }
+    .content {
+        padding: 1rem;
+    }
+    .drawer-nav ul.children {
+        padding-left: 0.8rem;
+    }
+    .drawer-nav .volume > a,
+    .drawer-nav .subvolume > a,
+    .drawer-nav .article > a {
+        padding: 6px 8px;
+        font-size: 0.95rem;
+    }
+    .drawer-nav .volume > a {
+        font-size: 1rem;
+    }
+    .drawer-nav .subvolume > a {
+        font-size: 0.9rem;
+    }
+    .drawer-nav .article > a {
+        font-size: 0.85rem;
+    }
+}

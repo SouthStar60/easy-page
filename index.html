@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文档中心</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/article.css" />
+</head>
+<body>
+
+    <!-- 顶栏 -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="hamburger" id="hamburgerBtn" aria-label="打开目录">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <span class="topbar-brand">文档中心</span>
+        </div>
+        <div class="topbar-right">
+            <button class="group-switcher" id="groupSwitcherBtn" aria-label="切换目录组">
+                <span class="group-label">::</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 左侧悬浮面板 -->
+    <aside class="drawer" id="drawer">
+        <div class="drawer-header">
+            <span class="drawer-title">目录</span>
+            <button class="drawer-close" id="drawerCloseBtn" aria-label="关闭目录">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+        <nav class="drawer-nav" id="drawerNav"></nav>
+    </aside>
+
+    <!-- 组切换菜单 -->
+    <div class="group-menu" id="groupMenu">
+        <ul id="groupMenuList"></ul>
+    </div>
+
+    <!-- 内容区 -->
+    <main class="content" id="contentArea">
+        <div class="content-placeholder">
+            <p>请从左侧目录选择一篇文章</p>
+        </div>
+    </main>
+
+    <!-- 遮罩层 -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- 加载脚本 -->
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/article.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
