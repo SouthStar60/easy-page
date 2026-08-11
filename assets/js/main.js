@@ -518,8 +518,51 @@
         }
     }
 
+    function handleUrlHash() {
+        const hash = window.location.hash;
+        if (hash && hash.startsWith('#') && hash.length > 1) {
+            const parts = hash.substring(1).split('/');
+            if (parts.length >= 2) {
+                const groupKey = parts[0];
+                const filePath = decodeURIComponent(parts.slice(1).join('/'));
+                // 检查分组是否存在
+                if (DOC_DATA[groupKey]) {
+                    // 设置当前分组
+                    currentGroup = groupKey;
+                    // 先渲染目录树，确保 DOM 中有对应文章节点
+                    renderDrawer(currentGroup);
+                    // 加载文章
+                    loadArticle(filePath);
+                    // 高亮对应的文章
+                    setTimeout(() => {
+                        const allArticles = drawerNav.querySelectorAll('.article > a[data-file]');
+                        for (let link of allArticles) {
+                            if (link.dataset.file === filePath) {
+                                drawerNav.querySelectorAll('.article').forEach(li => li.classList.remove('active'));
+                                link.closest('.article')?.classList.add('active');
+                                break;
+                            }
+                        }
+                    }, 50);
+                    // 更新组菜单高亮
+                    renderGroupMenu();
+                    // 关闭抽屉
+                    closeDrawer();
+                    return true; // 表示已处理跳转
+                }
+            }
+        }
+        return false; // 未处理跳转
+    }
+
     // 初始化
     function init() {
+        // 先尝试处理 URL 跳转
+        if (handleUrlHash()) {
+            // 如果跳转成功，直接返回，不执行后续默认加载
+            return;
+        }
+
         renderGroupMenu();
         renderDrawer(currentGroup);
         loadFirstArticle();
