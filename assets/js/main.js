@@ -125,10 +125,10 @@
         }
     }
 
-    // 递归渲染节点
+    // 统一渲染
     function renderNode(item, level = 0) {
         let html = '';
-        const isVolume = item.hasOwnProperty('subvolumes') || item.hasOwnProperty('articles');
+        const isVolume = item.hasOwnProperty('children') || item.hasOwnProperty('subvolumes') || item.hasOwnProperty('articles');
         const nodeType = isVolume ? 'volume' : 'subvolume';
         const iconType = isVolume ? 'volume' : 'subvolume';
         const label = item.name;
@@ -139,20 +139,43 @@
         html += `</a>`;
         html += `<ul class="children">`;
 
-        if (item.subvolumes && item.subvolumes.length) {
-            item.subvolumes.forEach(sub => {
-                html += renderNode(sub, level + 1);
-            });
+        // 优先使用 children
+        let children = item.children || [];
+        // 如果没有 children，但存在独立的 articles/subvolumes，则兼容处理
+        if (children.length === 0) {
+            if (item.articles) {
+                children = children.concat(item.articles.map(a => ({ type: 'article', ...a })));
+            }
+            if (item.subvolumes) {
+                children = children.concat(item.subvolumes.map(s => ({ type: 'subvolume', ...s })));
+            }
         }
-        if (item.articles && item.articles.length) {
-            item.articles.forEach(art => {
-                const mode = art.openMode || 'embed';
+
+        // 按数组顺序渲染
+        for (let child of children) {
+            if (child.type === 'article') {
+                const mode = child.openMode || 'embed';
                 html += `<li class="article" data-level="${level + 1}">`;
-                html += `<a data-file="${art.file}" data-openmode="${mode}">`;
-                html += `<span>${getIconSVG('article')}</span> ${art.title}`;
+                html += `<a data-file="${child.file}" data-openmode="${mode}">`;
+                html += `<span>${getIconSVG('article')}</span> ${child.title}`;
                 html += `</a>`;
                 html += `</li>`;
-            });
+            } else if (child.type === 'subvolume') {
+                html += renderNode(child, level + 1);
+            } else {
+                // 如果未指定 type，根据是否有 articles/subvolumes 自动判断
+                if (child.articles || child.subvolumes) {
+                    html += renderNode(child, level + 1);
+                } else {
+                    // 默认为文章
+                    const mode = child.openMode || 'embed';
+                    html += `<li class="article" data-level="${level + 1}">`;
+                    html += `<a data-file="${child.file}" data-openmode="${mode}">`;
+                    html += `<span>${getIconSVG('article')}</span> ${child.title}`;
+                    html += `</a>`;
+                    html += `</li>`;
+                }
+            }
         }
 
         html += `</ul>`;
@@ -160,22 +183,37 @@
         return html;
     }
 
-    // 获取当前分组的第一篇文章
+    // 获取第一篇文章
     function getFirstArticle(groupKey) {
         const group = DOC_DATA[groupKey];
         if (!group) return null;
         for (let vol of group.volumes) {
-            // 先检查子分卷
-            if (vol.subvolumes) {
-                for (let sub of vol.subvolumes) {
-                    if (sub.articles && sub.articles.length > 0) {
-                        return sub.articles[0];
-                    }
+            let children = vol.children || [];
+            // 兼容旧格式
+            if (children.length === 0) {
+                if (vol.articles) {
+                    children = children.concat(vol.articles.map(a => ({ type: 'article', ...a })));
+                }
+                if (vol.subvolumes) {
+                    children = children.concat(vol.subvolumes.map(s => ({ type: 'subvolume', ...s })));
                 }
             }
-            // 再检查母分卷直接文章
-            if (vol.articles && vol.articles.length > 0) {
-                return vol.articles[0];
+            // 深度优先搜索第一个文章
+            for (let child of children) {
+                if (child.type === 'article') {
+                    return child;
+                } else if (child.type === 'subvolume') {
+                    if (child.articles && child.articles.length > 0) {
+                        return child.articles[0];
+                    }
+                    // 递归查找子分卷内的 children
+                    let subChildren = child.children || [];
+                    for (let subChild of subChildren) {
+                        if (subChild.type === 'article') {
+                            return subChild;
+                        }
+                    }
+                }
             }
         }
         return null;
@@ -260,7 +298,6 @@
             return;
         }
 
-        // embed 模式
         if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
             contentArea.innerHTML = `
                 <iframe src="${filePath}" 
