@@ -146,7 +146,6 @@
         }
         if (item.articles && item.articles.length) {
             item.articles.forEach(art => {
-                // 读取 openMode，默认为 'embed'
                 const mode = art.openMode || 'embed';
                 html += `<li class="article" data-level="${level + 1}">`;
                 html += `<a data-file="${art.file}" data-openmode="${mode}">`;
@@ -166,15 +165,17 @@
         const group = DOC_DATA[groupKey];
         if (!group) return null;
         for (let vol of group.volumes) {
-            if (vol.articles && vol.articles.length > 0) {
-                return vol.articles[0];
-            }
+            // 先检查子分卷
             if (vol.subvolumes) {
                 for (let sub of vol.subvolumes) {
                     if (sub.articles && sub.articles.length > 0) {
                         return sub.articles[0];
                     }
                 }
+            }
+            // 再检查母分卷直接文章
+            if (vol.articles && vol.articles.length > 0) {
+                return vol.articles[0];
             }
         }
         return null;
@@ -252,18 +253,15 @@
         });
     }
 
-    // 核心加载函数
+    // 加载文章
     function loadArticle(filePath, openMode = 'embed') {
-        // 如果是 'blank'，直接新窗口打开
         if (openMode === 'blank') {
             window.open(filePath, '_blank');
             return;
         }
 
-        // 以下处理 'embed' 模式
-        // 判断是否为外部链接（http/https）
+        // embed 模式
         if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
-            // 用 iframe 嵌入
             contentArea.innerHTML = `
                 <iframe src="${filePath}" 
                         style="width:100%; height:100%; border:none; background:#fff; min-height: 80vh;">
@@ -272,7 +270,6 @@
             return;
         }
 
-        // 本地文件 fetch 加载
         fetch(filePath)
             .then(res => {
                 if (!res.ok) throw new Error('文章加载失败');
