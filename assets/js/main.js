@@ -139,9 +139,7 @@
         html += `</a>`;
         html += `<ul class="children">`;
 
-        // 优先使用 children
         let children = item.children || [];
-        // 如果没有 children，但存在独立的 articles/subvolumes，则兼容处理
         if (children.length === 0) {
             if (item.articles) {
                 children = children.concat(item.articles.map(a => ({ type: 'article', ...a })));
@@ -151,7 +149,6 @@
             }
         }
 
-        // 按数组顺序渲染
         for (let child of children) {
             if (child.type === 'article') {
                 const mode = child.openMode || 'embed';
@@ -163,11 +160,9 @@
             } else if (child.type === 'subvolume') {
                 html += renderNode(child, level + 1);
             } else {
-                // 如果未指定 type，根据是否有 articles/subvolumes 自动判断
                 if (child.articles || child.subvolumes) {
                     html += renderNode(child, level + 1);
                 } else {
-                    // 默认为文章
                     const mode = child.openMode || 'embed';
                     html += `<li class="article" data-level="${level + 1}">`;
                     html += `<a data-file="${child.file}" data-openmode="${mode}">`;
@@ -189,7 +184,6 @@
         if (!group) return null;
         for (let vol of group.volumes) {
             let children = vol.children || [];
-            // 兼容旧格式
             if (children.length === 0) {
                 if (vol.articles) {
                     children = children.concat(vol.articles.map(a => ({ type: 'article', ...a })));
@@ -198,7 +192,6 @@
                     children = children.concat(vol.subvolumes.map(s => ({ type: 'subvolume', ...s })));
                 }
             }
-            // 深度优先搜索第一个文章
             for (let child of children) {
                 if (child.type === 'article') {
                     return child;
@@ -206,7 +199,6 @@
                     if (child.articles && child.articles.length > 0) {
                         return child.articles[0];
                     }
-                    // 递归查找子分卷内的 children
                     let subChildren = child.children || [];
                     for (let subChild of subChildren) {
                         if (subChild.type === 'article') {
@@ -251,7 +243,6 @@
         html += '</ul>';
         drawerNav.innerHTML = html;
 
-        // 折叠事件
         drawerNav.querySelectorAll('.toggle[data-toggle="true"]').forEach(toggle => {
             toggle.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -275,7 +266,6 @@
             });
         });
 
-        // 文章点击事件
         drawerNav.querySelectorAll('.article > a[data-file]').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -289,6 +279,12 @@
                 }
             });
         });
+
+        // 应用搜索过滤
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput && searchInput.value.trim()) {
+            filterArticles(searchInput.value.trim());
+        }
     }
 
     // 加载文章
@@ -381,12 +377,77 @@
         }
     });
 
+    // 搜索功能
+    function filterArticles(query) {
+        const articles = drawerNav.querySelectorAll('.article');
+        if (!query) {
+            articles.forEach(art => {
+                art.style.display = '';
+                let parent = art.closest('li.volume, li.subvolume');
+                while (parent) {
+                    parent.style.display = '';
+                    parent = parent.parentElement?.closest('li.volume, li.subvolume');
+                }
+            });
+            return;
+        }
+        const lowerQuery = query.toLowerCase();
+        articles.forEach(art => {
+            const link = art.querySelector('a[data-file]');
+            if (!link) return;
+            const title = link.textContent.trim().toLowerCase();
+            const match = title.includes(lowerQuery);
+            art.style.display = match ? '' : 'none';
+            if (match) {
+                let parent = art.closest('li.volume, li.subvolume');
+                while (parent) {
+                    parent.style.display = '';
+                    parent = parent.parentElement?.closest('li.volume, li.subvolume');
+                }
+            }
+        });
+    }
+
+    function bindSearchEvents() {
+        const searchInput = document.getElementById('searchInput');
+        const searchClear = document.getElementById('searchClear');
+        if (!searchInput) return;
+
+        const newInput = searchInput.cloneNode(true);
+        searchInput.parentNode.replaceChild(newInput, searchInput);
+        const newClear = searchClear.cloneNode(true);
+        searchClear.parentNode.replaceChild(newClear, searchClear);
+
+        newInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            filterArticles(query);
+            newClear.classList.toggle('visible', query.length > 0);
+        });
+
+        newClear.addEventListener('click', function() {
+            newInput.value = '';
+            filterArticles('');
+            newClear.classList.remove('visible');
+            newInput.focus();
+        });
+
+        newInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                filterArticles('');
+                newClear.classList.remove('visible');
+                this.blur();
+            }
+        });
+    }
+
     // 初始化
     function init() {
         renderGroupMenu();
         renderDrawer(currentGroup);
         loadFirstArticle();
         closeDrawer();
+        bindSearchEvents();
     }
 
     init();
