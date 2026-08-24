@@ -1,36 +1,39 @@
-# Easy page(简页)
+# Easy Page
 
-简单的web网页，用于快速构建站点。
+English|[中文](README-zh_CN.md)
 
-# 使用方法
+A simple web page for quickly building sites.
 
-一般不需要修改过多内容，直接修改`assets/js/data.js`以添加文章或网页。
+# Usage
 
-## data.js格式
+Generally, you don't need to modify much; simply edit assets/js/data.js to add articles or pages.
 
-格式：
+## data.js Format
+
+Format:
+
 ```javascript
-const DOC_DATA = {    //存储数据
-    '组': {
-        label: '组在“::”菜单显示的名称',
+const DOC_DATA = {    // stores data
+    'group': {
+        label: 'Name displayed in the "::" menu for this group',
         volumes: [
             {
-                name: '母分卷名',
+                name: 'Parent volume name',
                 children: [
                     {
-                        type: 'article',    //类型，article为文章，subvolume为子分卷
-                        title: '文章标题',
-                        file: '文章所在位置',
+                        type: 'article',    // type: article for an article, subvolume for a sub-volume
+                        title: 'Article title',
+                        file: 'Article file location',
                     },
                     {
                         type: 'subvolume',
-                        name: '子分卷名',
+                        name: 'Sub-volume name',
                         children: [
                         { 
                             type: 'article', 
-                            title: '文章标题', 
-                            file: '文章所在位置',
-                            openMode: 'embed'    //打开模式embed为嵌入，blank为新标签页打开，需要注意，blank需要自己手动在文章中添加样式。
+                            title: 'Article title', 
+                            file: 'Article file location',
+                            openMode: 'embed'    // openMode: embed for embedded display, blank to open in a new tab; note that for blank, you need to manually add styling in the article itself.
                         }
                         ]
                     }
@@ -40,48 +43,49 @@ const DOC_DATA = {    //存储数据
     }
 }
 
-const DEFAULT_GROUP = '组';    //默认打开的组。
+const DEFAULT_GROUP = 'group';    // Default group to open.
 ```
 
-简单示例:
+Simple example:
+
 ```javascript
 const DOC_DATA = {
     'groupA': {
-        label: '示例组 A',
+        label: 'Example Group A',
         volumes: [
             {
-                name: '母分卷 1',
+                name: 'Parent Volume 1',
                 children: [
-                    { type: 'article', title: '文章 1-1', file: 'assets/pages/page1.html', openMode: 'embed' },
-                    { type: 'subvolume', name: '子分卷 1-1', children: [
-                        { type: 'article', title: '文章 1-1-1', file: 'assets/pages/page3.html', openMode: 'embed' }
+                    { type: 'article', title: 'Article 1-1', file: 'assets/pages/page1.html', openMode: 'embed' },
+                    { type: 'subvolume', name: 'Sub-volume 1-1', children: [
+                        { type: 'article', title: 'Article 1-1-1', file: 'assets/pages/page3.html', openMode: 'embed' }
                     ]},
-                    { type: 'article', title: '文章 1-2', file: 'assets/pages/page2.html', openMode: 'blank' },
-                    { type: 'subvolume', name: '子分卷 1-2', children: [
-                        { type: 'article', title: '文章 1-2-1', file: 'assets/pages/page4.html', openMode: 'blank' }
+                    { type: 'article', title: 'Article 1-2', file: 'assets/pages/page2.html', openMode: 'blank' },
+                    { type: 'subvolume', name: 'Sub-volume 1-2', children: [
+                        { type: 'article', title: 'Article 1-2-1', file: 'assets/pages/page4.html', openMode: 'blank' }
                     ]}
                 ]
             },
             {
-                name: '母分卷 2',
+                name: 'Parent Volume 2',
                 children: [
-                    { type: 'subvolume', name: '子分卷 2-1', children: [
-                        { type: 'article', title: '文章 2-1-1', file: 'assets/pages/page6.html', openMode: 'embed' }
+                    { type: 'subvolume', name: 'Sub-volume 2-1', children: [
+                        { type: 'article', title: 'Article 2-1-1', file: 'assets/pages/page6.html', openMode: 'embed' }
                     ]},
-                    { type: 'article', title: '文章 2-1', file: 'assets/pages/page5.html', openMode: 'embed' }
+                    { type: 'article', title: 'Article 2-1', file: 'assets/pages/page5.html', openMode: 'embed' }
                 ]
             }
         ]
     },
     'groupB': {
-        label: '示例组 B',
+        label: 'Example Group B',
         volumes: [
             {
-                name: '母分卷 3',
+                name: 'Parent Volume 3',
                 children: [
-                    { type: 'article', title: '文章 3-1', file: 'assets/pages/page7.html', openMode: 'blank' },
-                    { type: 'subvolume', name: '子分卷 3-1', children: [
-                        { type: 'article', title: '文章 3-1-1', file: 'assets/pages/page8.html', openMode: 'embed' }
+                    { type: 'article', title: 'Article 3-1', file: 'assets/pages/page7.html', openMode: 'blank' },
+                    { type: 'subvolume', name: 'Sub-volume 3-1', children: [
+                        { type: 'article', title: 'Article 3-1-1', file: 'assets/pages/page8.html', openMode: 'embed' }
                     ]}
                 ]
             }
@@ -92,14 +96,18 @@ const DOC_DATA = {
 const DEFAULT_GROUP = 'groupA';
 ```
 
-## URL 跳转
+## URL Navigation
 
-启动时就打开某个文章
+Open a specific article on startup.
 
-格式：#组名/文章文件路径
+Format: #group_name/article_file_path
 
-示例：
+Example:
+
 ```url
 http://localhost:5500/index.html#groupA/page1.html
 ```
 
+---
+
+Translated from Chinese by [DeepSeek](https://www.deepseek.com/)
