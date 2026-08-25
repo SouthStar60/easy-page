@@ -2,6 +2,8 @@
 
 English|[中文](README-zh_CN.md)
 
+The development of this warehouse code has been halted due to logical issues!
+
 A simple web page for quickly building sites.
 
 # Usage
